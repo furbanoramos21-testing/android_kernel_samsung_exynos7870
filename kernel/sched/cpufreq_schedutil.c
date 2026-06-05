@@ -21,6 +21,11 @@
 
 #define SUGOV_KTHREAD_PRIORITY	50
 
+#define kthread_init_worker      init_kthread_worker
+#define kthread_init_work        init_kthread_work
+#define kthread_queue_work       queue_kthread_work
+#define kthread_flush_worker     flush_kthread_worker
+
 struct sugov_tunables {
 	unsigned int up_rate_limit_us;
 	unsigned int down_rate_limit_us;
@@ -855,7 +860,7 @@ static int sugov_stop(struct cpufreq_policy *policy)
 	synchronize_sched();
 
 	irq_work_sync(&sg_policy->irq_work);
-	kthread_cancel_work_sync(&sg_policy->work);
+	flush_kthread_work(&sg_policy->work);
 	return 0;
 }
 
